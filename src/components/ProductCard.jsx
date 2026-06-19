@@ -1,5 +1,22 @@
+import { Helmet } from 'react-helmet-async'
 import ImageCarousel from './ImageCarousel.jsx'
 import './ProductCard.css'
+
+function getProductSchema(product) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description,
+    image: product.images || [],
+    offers: {
+      '@type': 'Offer',
+      url: product.affiliateLink,
+      priceCurrency: 'INR',
+      availability: 'https://schema.org/InStock',
+    },
+  }
+}
 
 function ProductCard({ product }) {
   const openAffiliateLink = () => {
@@ -17,6 +34,11 @@ function ProductCard({ product }) {
 
   return (
     <article className="product-card">
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(getProductSchema(product))}
+        </script>
+      </Helmet>
       <div className="product-card-media">
         <ImageCarousel
           images={product.images || []}

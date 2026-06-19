@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../firebase.js'
+import SEO, { SITE_NAME, SITE_URL } from '../components/SEO.jsx'
 import './AdminLogin.css'
 
 function AdminLogin() {
@@ -40,48 +41,66 @@ function AdminLogin() {
   }
 
   if (isCheckingAuth) {
-    return <main className="auth-page">Checking admin session...</main>
+    return (
+      <>
+        <SEO
+          title={`Admin Login - ${SITE_NAME}`}
+          description="Admin login for Trendkaro."
+          url={`${SITE_URL}/admin-login`}
+          noIndex
+        />
+        <main className="auth-page">Checking admin session...</main>
+      </>
+    )
   }
 
   return (
-    <main className="auth-page">
-      <form className="auth-card" onSubmit={handleSubmit}>
-        <div className="auth-card-heading">
-          <h1>Admin Login</h1>
-          <p>Sign in with the admin account created in Firebase.</p>
-        </div>
+    <>
+      <SEO
+        title={`Admin Login - ${SITE_NAME}`}
+        description="Admin login for Trendkaro."
+        url={`${SITE_URL}/admin-login`}
+        noIndex
+      />
+      <main className="auth-page">
+        <form className="auth-card" onSubmit={handleSubmit}>
+          <div className="auth-card-heading">
+            <h1>Admin Login</h1>
+            <p>Sign in with the admin account created in Firebase.</p>
+          </div>
 
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="admin@example.com"
-            autoComplete="email"
-            required
-          />
-        </label>
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="admin@example.com"
+              autoComplete="email"
+              required
+            />
+          </label>
 
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="••••••••"
-            autoComplete="current-password"
-            required
-          />
-        </label>
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              required
+            />
+          </label>
 
-        {error && <p className="auth-error">{error}</p>}
+          {error && <p className="auth-error">{error}</p>}
 
-        <button type="submit" className="primary-button" disabled={isSubmitting}>
-          {isSubmitting ? 'Signing in...' : 'Login'}
-        </button>
-      </form>
-    </main>
+          <button type="submit" className="primary-button" disabled={isSubmitting}>
+            {isSubmitting ? 'Signing in...' : 'Login'}
+          </button>
+        </form>
+      </main>
+    </>
   )
 }
 

@@ -2,6 +2,13 @@
   width: 100%;
 }
 
+.product-grid-title {
+  margin: 0 0 14px;
+  color: var(--text-color);
+  font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+  line-height: 1.2;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

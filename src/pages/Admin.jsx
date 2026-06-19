@@ -13,6 +13,7 @@ import {
 import { FiEdit2, FiLogOut, FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { auth, db } from '../firebase.js'
 import categories from '../data/categories.js'
+import SEO, { SITE_NAME, SITE_URL } from '../components/SEO.jsx'
 import './Admin.css'
 
 const emptyForm = {
@@ -226,11 +227,28 @@ function Admin() {
   }
 
   if (isCheckingAuth) {
-    return <main className="admin-page">Checking admin session...</main>
+    return (
+      <>
+        <SEO
+          title={`Admin - ${SITE_NAME}`}
+          description="Admin dashboard for Trendkaro."
+          url={`${SITE_URL}/admin`}
+          noIndex
+        />
+        <main className="admin-page">Checking admin session...</main>
+      </>
+    )
   }
 
   return (
-    <main className="admin-page">
+    <>
+      <SEO
+        title={`Admin - ${SITE_NAME}`}
+        description="Admin dashboard for Trendkaro."
+        url={`${SITE_URL}/admin`}
+        noIndex
+      />
+      <main className="admin-page">
       <div className="admin-shell">
         <header className="admin-header">
           <div>
@@ -396,7 +414,8 @@ function Admin() {
           )}
         </section>
       </div>
-    </main>
+      </main>
+    </>
   )
 }
 

@@ -32,9 +32,15 @@ function SearchPopup({ isOpen, initialQuery = '', onClose }) {
   const [popupQuery, setPopupQuery] = useState(initialQuery)
 
   useEffect(() => {
-    if (isOpen) {
-      setPopupQuery(initialQuery)
+    if (!isOpen) {
+      return undefined
     }
+
+    const timerId = window.setTimeout(() => {
+      setPopupQuery(initialQuery)
+    }, 0)
+
+    return () => window.clearTimeout(timerId)
   }, [initialQuery, isOpen])
 
   useEffect(() => {
@@ -147,7 +153,10 @@ function SearchPopup({ isOpen, initialQuery = '', onClose }) {
               >
                 <img
                   src={product.images?.[0] || 'https://placehold.co/120x120?text=Product'}
-                  alt={product.title}
+                  alt={`${product.title} - affiliate product image`}
+                  width="120"
+                  height="120"
+                  loading="lazy"
                 />
                 <span className="full-search-copy">
                   <strong>{product.title}</strong>

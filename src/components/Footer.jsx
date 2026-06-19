@@ -6,7 +6,7 @@ function Footer() {
     <footer className="site-footer">
       <div className="footer-inner">
         <div>
-          <strong>MyAffiliateStore</strong>
+          <strong>Trendkaro</strong>
           <p>Daily finds, better deals, easier decisions.</p>
         </div>
 
@@ -37,7 +37,7 @@ function Footer() {
           </a>
         </div>
 
-        <small>© 2026 MyAffiliateStore. All rights reserved.</small>
+        <small>© 2026 Trendkaro. All rights reserved.</small>
       </div>
     </footer>
   )

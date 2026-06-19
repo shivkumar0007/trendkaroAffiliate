@@ -6,6 +6,7 @@ const SWIPE_CLICK_THRESHOLD = 8
 
 function ImageCarousel({ images = [], title = 'Product image', onImageClick }) {
   const safeImages = images.length > 0 ? images : ['https://placehold.co/800x1000?text=Product']
+  const altBase = `${title} - affiliate product image`
   const [activeIndex, setActiveIndex] = useState(0)
   const intervalRef = useRef(null)
   const scrollerRef = useRef(null)
@@ -53,12 +54,7 @@ function ImageCarousel({ images = [], title = 'Product image', onImageClick }) {
     return () => stopAutoScroll()
   }, [safeImages.length])
 
-  useEffect(() => {
-    if (activeIndex >= safeImages.length) {
-      setActiveIndex(0)
-      scrollToIndex(0)
-    }
-  }, [activeIndex, safeImages.length])
+  const activeImageIndex = Math.min(activeIndex, safeImages.length - 1)
 
   const handleScroll = () => {
     const scroller = scrollerRef.current
@@ -95,7 +91,13 @@ function ImageCarousel({ images = [], title = 'Product image', onImageClick }) {
         onClick={onImageClick}
         aria-label={`Open ${title}`}
       >
-        <img src={safeImages[0]} alt={title} loading="lazy" />
+        <img
+          src={safeImages[0]}
+          alt={altBase}
+          width="800"
+          height="1000"
+          loading="lazy"
+        />
       </button>
     )
   }
@@ -119,7 +121,9 @@ function ImageCarousel({ images = [], title = 'Product image', onImageClick }) {
           <img
             key={`${image}-${index}`}
             src={image}
-            alt={`${title} ${index + 1}`}
+            alt={`${altBase} ${index + 1}`}
+            width="800"
+            height="1000"
             loading="lazy"
           />
         ))}
@@ -130,7 +134,7 @@ function ImageCarousel({ images = [], title = 'Product image', onImageClick }) {
           <button
             key={`${image}-dot-${index}`}
             type="button"
-            className={`image-carousel-dot${activeIndex === index ? ' active' : ''}`}
+            className={`image-carousel-dot${activeImageIndex === index ? ' active' : ''}`}
             onClick={() => {
               stopAutoScroll()
               setActiveIndex(index)
@@ -138,7 +142,7 @@ function ImageCarousel({ images = [], title = 'Product image', onImageClick }) {
               startAutoScroll()
             }}
             aria-label={`Show image ${index + 1}`}
-            aria-current={activeIndex === index}
+            aria-current={activeImageIndex === index}
           />
         ))}
       </div>

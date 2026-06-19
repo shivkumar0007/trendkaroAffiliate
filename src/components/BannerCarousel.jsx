@@ -59,11 +59,7 @@ function BannerCarousel() {
     return () => stopAutoScroll()
   }, [slides.length])
 
-  useEffect(() => {
-    if (activeIndex >= slides.length) {
-      setActiveIndex(0)
-    }
-  }, [activeIndex, slides.length])
+  const activeSlideIndex = slides.length ? Math.min(activeIndex, slides.length - 1) : 0
 
   const goToPrevious = () => {
     if (slides.length === 0) {
@@ -113,12 +109,18 @@ function BannerCarousel() {
   }
 
   if (isLoading) {
-    return <section className="banner-carousel banner-state">Loading featured offers...</section>
+    return (
+      <section className="banner-carousel banner-state" aria-labelledby="featured-deals-title">
+        <h2 id="featured-deals-title" className="visually-hidden">Featured Deals</h2>
+        Loading featured offers...
+      </section>
+    )
   }
 
   if (error || slides.length === 0) {
     return (
-      <section className="banner-carousel banner-state">
+      <section className="banner-carousel banner-state" aria-labelledby="featured-deals-title">
+        <h2 id="featured-deals-title" className="visually-hidden">Featured Deals</h2>
         {error || 'No featured products yet.'}
       </section>
     )
@@ -127,16 +129,17 @@ function BannerCarousel() {
   return (
     <section
       className="banner-carousel"
-      aria-label="Featured affiliate offers"
+      aria-labelledby="featured-deals-title"
       onMouseEnter={stopAutoScroll}
       onMouseLeave={startAutoScroll}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
+      <h2 id="featured-deals-title" className="visually-hidden">Featured Deals</h2>
       <div className="banner-viewport">
         <div
           className="banner-track"
-          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+          style={{ transform: `translateX(-${activeSlideIndex * 100}%)` }}
         >
           {slides.map((product, index) => (
             <button
@@ -148,7 +151,11 @@ function BannerCarousel() {
             >
               <img
                 src={product.images?.[0] || 'https://placehold.co/1200x500?text=Best+Offer'}
-                alt={product.title}
+                alt={`${product.title} - featured affiliate product image`}
+                width="1200"
+                height="500"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
               />
               <span className="offer-badge">Best Offer</span>
               <span className="banner-title">{product.title}</span>
@@ -179,10 +186,10 @@ function BannerCarousel() {
           <button
             key={`${product.id}-dot-${index}`}
             type="button"
-            className={`banner-dot${activeIndex === index ? ' active' : ''}`}
+            className={`banner-dot${activeSlideIndex === index ? ' active' : ''}`}
             onClick={() => setActiveIndex(index)}
             aria-label={`Go to featured offer ${index + 1}`}
-            aria-current={activeIndex === index}
+            aria-current={activeSlideIndex === index}
           />
         ))}
       </div>

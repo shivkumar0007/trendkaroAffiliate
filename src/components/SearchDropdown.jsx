@@ -42,6 +42,7 @@ function SearchDropdown({ isOpen, query, onClose, onClear }) {
   useEffect(() => {
     const timerId = window.setTimeout(() => {
       setDebouncedQuery(query.trim())
+      setHighlightedIndex(0)
     }, DEBOUNCE_MS)
 
     return () => window.clearTimeout(timerId)
@@ -57,9 +58,7 @@ function SearchDropdown({ isOpen, query, onClose, onClear }) {
       .slice(0, MAX_RESULTS)
   }, [products, debouncedQuery])
 
-  useEffect(() => {
-    setHighlightedIndex(0)
-  }, [debouncedQuery])
+  const safeHighlightedIndex = Math.min(highlightedIndex, Math.max(results.length - 1, 0))
 
   const openProduct = (product) => {
     if (product.affiliateLink) {
@@ -99,21 +98,27 @@ function SearchDropdown({ isOpen, query, onClose, onClear }) {
 
       if (event.key === 'Enter') {
         event.preventDefault()
-        openProduct(results[highlightedIndex])
+        openProduct(results[safeHighlightedIndex])
       }
     }
 
     document.addEventListener('keydown', handleKeyDown)
 
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [highlightedIndex, isOpen, onClose, results])
+  }, [isOpen, onClose, results, safeHighlightedIndex])
 
   if (!isOpen || !query.trim()) {
     return null
   }
 
   return (
-    <div id="search-dropdown" className="search-dropdown" role="listbox">
+    <div
+      id="search-dropdown"
+      className="search-dropdown"
+      role="listbox"
+      aria-live="polite"
+      aria-label="Search results"
+    >
       {isLoading && <p className="search-dropdown-state">Loading products...</p>}
       {!isLoading && error && <p className="search-dropdown-state">{error}</p>}
       {!isLoading && !error && debouncedQuery && results.length === 0 && (
@@ -125,15 +130,18 @@ function SearchDropdown({ isOpen, query, onClose, onClear }) {
           <button
             key={product.id}
             type="button"
-            className={`search-dropdown-item${highlightedIndex === index ? ' highlighted' : ''}`}
+            className={`search-dropdown-item${safeHighlightedIndex === index ? ' highlighted' : ''}`}
             onMouseEnter={() => setHighlightedIndex(index)}
             onClick={() => openProduct(product)}
             role="option"
-            aria-selected={highlightedIndex === index}
+            aria-selected={safeHighlightedIndex === index}
           >
             <img
               src={product.images?.[0] || 'https://placehold.co/96x96?text=Product'}
-              alt={product.title}
+              alt={`${product.title} - affiliate product image`}
+              width="96"
+              height="96"
+              loading="lazy"
             />
             <span className="search-dropdown-copy">
               <strong>{product.title}</strong>

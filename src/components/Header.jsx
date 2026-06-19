@@ -70,8 +70,8 @@ function Header() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link className="site-logo" to="/" aria-label="MyAffiliateStore home">
-          MyAffiliateStore
+        <Link className="site-logo" to="/" aria-label="Trendkaro home">
+          Trendkaro
         </Link>
 
         <div className="header-search" role="search" ref={searchRef}>
