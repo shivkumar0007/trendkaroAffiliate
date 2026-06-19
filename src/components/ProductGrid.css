@@ -1,0 +1,88 @@
+.product-grid-wrap {
+  width: 100%;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.product-grid-state {
+  display: grid;
+  min-height: 180px;
+  place-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin: 0;
+  padding: 24px;
+  color: var(--text-color);
+  background: var(--card-bg);
+  text-align: center;
+}
+
+.product-skeleton {
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--card-bg);
+}
+
+.skeleton-image,
+.skeleton-line {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--border-color) 68%, var(--card-bg));
+}
+
+.skeleton-image {
+  aspect-ratio: 4 / 5;
+  margin-bottom: 12px;
+}
+
+.skeleton-line {
+  height: 12px;
+  margin-top: 9px;
+  width: 64%;
+}
+
+.skeleton-line.wide {
+  width: 88%;
+}
+
+.skeleton-image::after,
+.skeleton-line::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--bg-color) 70%, transparent),
+    transparent
+  );
+  content: '';
+  transform: translateX(-100%);
+  animation: skeletonShimmer 1.2s infinite;
+}
+
+@keyframes skeletonShimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}

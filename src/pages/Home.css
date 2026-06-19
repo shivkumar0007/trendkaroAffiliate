@@ -1,0 +1,13 @@
+.home-main {
+  padding-top: 32px;
+}
+
+.home-intro strong {
+  color: var(--accent-color);
+}
+
+@media (max-width: 760px) {
+  .home-main {
+    padding-top: 24px;
+  }
+}
