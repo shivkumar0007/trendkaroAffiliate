@@ -5,6 +5,7 @@ import {
   addDoc,
   collection,
   deleteDoc,
+  deleteField,
   doc,
   onSnapshot,
   serverTimestamp,
@@ -14,13 +15,14 @@ import { FiEdit2, FiLogOut, FiPlus, FiTrash2, FiX } from 'react-icons/fi'
 import { auth, db } from '../firebase.js'
 import categories from '../data/categories.js'
 import SEO, { SITE_NAME, SITE_URL } from '../components/SEO.jsx'
+import { getProductCategories } from '../utils/productHelpers.js'
 import './Admin.css'
 
 const emptyForm = {
   title: '',
   description: '',
   affiliateLink: '',
-  category: 'trend',
+  categories: ['trend'],
   isFeatured: false,
   images: [''],
 }
@@ -101,6 +103,21 @@ function Admin() {
     }))
   }
 
+  const toggleCategory = (categoryId) => {
+    setFormData((current) => {
+      const currentCategories = getProductCategories(current)
+      const hasCategory = currentCategories.includes(categoryId)
+      const nextCategories = hasCategory
+        ? currentCategories.filter((item) => item !== categoryId)
+        : [...currentCategories, categoryId]
+
+      return {
+        ...current,
+        categories: nextCategories,
+      }
+    })
+  }
+
   const addImageInput = () => {
     setFormData((current) => ({
       ...current,
@@ -127,10 +144,10 @@ function Admin() {
       !formData.title.trim() ||
       !formData.description.trim() ||
       !formData.affiliateLink.trim() ||
-      !formData.category ||
+      getProductCategories(formData).length === 0 ||
       images.length === 0
     ) {
-      return 'Please fill all fields and add at least one image URL.'
+      return 'Please fill all fields, choose at least one category, and add at least one image URL.'
     }
 
     try {
@@ -165,7 +182,7 @@ function Admin() {
       title: formData.title.trim(),
       description: formData.description.trim(),
       affiliateLink: formData.affiliateLink.trim(),
-      category: formData.category,
+      categories: getProductCategories(formData),
       isFeatured: formData.isFeatured,
       images: formData.images.map((image) => image.trim()).filter(Boolean),
     }
@@ -174,7 +191,10 @@ function Admin() {
 
     try {
       if (editingProductId) {
-        await updateDoc(doc(db, 'products', editingProductId), payload)
+        await updateDoc(doc(db, 'products', editingProductId), {
+          ...payload,
+          category: deleteField(),
+        })
         setStatus({ type: 'success', message: 'Product updated successfully!' })
       } else {
         await addDoc(collection(db, 'products'), {
@@ -198,7 +218,7 @@ function Admin() {
       title: product.title || '',
       description: product.description || '',
       affiliateLink: product.affiliateLink || '',
-      category: product.category || 'trend',
+      categories: getProductCategories(product),
       isFeatured: Boolean(product.isFeatured),
       images: product.images?.length ? product.images : [''],
     })
@@ -304,20 +324,19 @@ function Admin() {
             </label>
 
             <div className="form-row">
-              <label>
-                Category
-                <select
-                  value={formData.category}
-                  onChange={(event) => updateField('category', event.target.value)}
-                  required
-                >
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <fieldset className="category-checks">
+                <legend>Categories</legend>
+                {categories.map((category) => (
+                  <label key={category.id}>
+                    <input
+                      type="checkbox"
+                      checked={getProductCategories(formData).includes(category.id)}
+                      onChange={() => toggleCategory(category.id)}
+                    />
+                    {category.label}
+                  </label>
+                ))}
+              </fieldset>
 
               <label className="featured-check">
                 <input
@@ -393,7 +412,11 @@ function Admin() {
                   />
                   <div className="product-row-main">
                     <strong>{product.title}</strong>
-                    <span>{categoryLabelById[product.category] || product.category}</span>
+                    <span>
+                      {getProductCategories(product)
+                        .map((categoryId) => categoryLabelById[categoryId] || categoryId)
+                        .join(', ')}
+                    </span>
                   </div>
                   <span className={`featured-badge ${product.isFeatured ? 'yes' : 'no'}`}>
                     {product.isFeatured ? 'Featured' : 'No'}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { FiExternalLink, FiSearch, FiX } from 'react-icons/fi'
 import { useProducts } from '../context/ProductsContext.jsx'
 import categories from '../data/categories.js'
+import { getProductCategories } from '../utils/productHelpers.js'
 import './SearchPopup.css'
 
 const categoryLabelById = categories.reduce((labels, category) => {
@@ -10,7 +11,19 @@ const categoryLabelById = categories.reduce((labels, category) => {
 }, {})
 
 function getCategoryLabel(product) {
-  return categoryLabelById[product.category] || product.category || ''
+  return getProductCategories(product)
+    .map((categoryId) => categoryLabelById[categoryId] || categoryId)
+    .filter(Boolean)
+    .join(', ')
+}
+
+function getCategoryTags(product) {
+  return getProductCategories(product)
+    .map((categoryId) => ({
+      id: categoryId,
+      label: categoryLabelById[categoryId] || categoryId,
+    }))
+    .filter((category) => category.label)
 }
 
 function matchesSearch(product, query) {
@@ -163,7 +176,13 @@ function SearchPopup({ isOpen, initialQuery = '', onClose }) {
                   <span className="full-search-description">
                     {product.description || 'No description available'}
                   </span>
-                  <span className="full-search-category">{getCategoryLabel(product)}</span>
+                  <span className="full-search-categories" aria-label="Product categories">
+                    {getCategoryTags(product).map((category) => (
+                      <span className="full-search-category" key={category.id}>
+                        {category.label}
+                      </span>
+                    ))}
+                  </span>
                 </span>
                 <FiExternalLink aria-hidden="true" />
               </button>

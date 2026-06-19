@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { FiExternalLink } from 'react-icons/fi'
 import { useProducts } from '../context/ProductsContext.jsx'
 import categories from '../data/categories.js'
+import { getProductCategories } from '../utils/productHelpers.js'
 
 const MAX_RESULTS = 6
 const DEBOUNCE_MS = 250
@@ -12,7 +13,19 @@ const categoryLabelById = categories.reduce((labels, category) => {
 }, {})
 
 function getProductCategoryLabel(product) {
-  return categoryLabelById[product.category] || product.category || ''
+  return getProductCategories(product)
+    .map((categoryId) => categoryLabelById[categoryId] || categoryId)
+    .filter(Boolean)
+    .join(', ')
+}
+
+function getProductCategoryTags(product) {
+  return getProductCategories(product)
+    .map((categoryId) => ({
+      id: categoryId,
+      label: categoryLabelById[categoryId] || categoryId,
+    }))
+    .filter((category) => category.label)
 }
 
 function productMatchesSearch(product, query) {
@@ -145,7 +158,13 @@ function SearchDropdown({ isOpen, query, onClose, onClear }) {
             />
             <span className="search-dropdown-copy">
               <strong>{product.title}</strong>
-              <span>{getProductCategoryLabel(product)}</span>
+              <span className="search-dropdown-tags" aria-label="Product categories">
+                {getProductCategoryTags(product).map((category) => (
+                  <span className="search-dropdown-tag" key={category.id}>
+                    {category.label}
+                  </span>
+                ))}
+              </span>
             </span>
             <FiExternalLink aria-hidden="true" />
           </button>

@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useProducts } from '../context/ProductsContext.jsx'
+import { getProductCategories } from '../utils/productHelpers.js'
 import ProductCard from './ProductCard.jsx'
 import './ProductGrid.css'
 
@@ -7,7 +8,10 @@ function ProductGrid({ activeCategory = 'trend', categoryLabel = 'Products' }) {
   const { products, isLoading, error } = useProducts()
 
   const filteredProducts = useMemo(
-    () => products.filter((product) => product.category === activeCategory),
+    () =>
+      products.filter((product) =>
+        getProductCategories(product).includes(activeCategory),
+      ),
     [products, activeCategory],
   )
 

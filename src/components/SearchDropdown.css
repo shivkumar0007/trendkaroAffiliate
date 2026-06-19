@@ -80,8 +80,7 @@
   gap: 3px;
 }
 
-.search-dropdown-copy strong,
-.search-dropdown-copy span {
+.search-dropdown-copy strong {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -93,14 +92,21 @@
   line-height: 1.25;
 }
 
-.search-dropdown-copy span {
-  justify-self: start;
+.search-dropdown-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.search-dropdown-tag {
   border-radius: 999px;
   padding: 2px 8px;
   color: var(--accent-color);
   background: var(--accent-glow);
   font-size: 0.74rem;
   font-weight: 800;
+  line-height: 1.35;
 }
 
 .search-dropdown-item > svg {

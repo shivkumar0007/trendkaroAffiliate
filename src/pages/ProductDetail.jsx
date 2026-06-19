@@ -6,6 +6,7 @@ import SEO, { SITE_NAME, SITE_URL } from '../components/SEO.jsx'
 import ImageCarousel from '../components/ImageCarousel.jsx'
 import { useProducts } from '../context/ProductsContext.jsx'
 import categories from '../data/categories.js'
+import { getProductCategories } from '../utils/productHelpers.js'
 import './ProductDetail.css'
 
 function truncateDescription(value, limit = 155) {
@@ -94,7 +95,11 @@ function ProductDetail() {
     return <Navigate to="/" replace />
   }
 
-  const category = categories.find((item) => item.id === product.category)
+  const productCategoryIds = getProductCategories(product)
+  const productCategories = productCategoryIds
+    .map((categoryId) => categories.find((item) => item.id === categoryId))
+    .filter(Boolean)
+  const category = productCategories[0]
   const description = truncateDescription(product.description)
   const canonicalUrl = `${SITE_URL}/product/${product.id}`
   const image = product.images?.[0]
@@ -122,11 +127,11 @@ function ProductDetail() {
           </div>
 
           <div className="product-detail-copy">
-            {category && (
-              <Link className="product-detail-category" to={`/category/${category.id}`}>
-                {category.label}
+            {productCategories.map((item) => (
+              <Link className="product-detail-category" to={`/category/${item.id}`} key={item.id}>
+                {item.label}
               </Link>
-            )}
+            ))}
             <h1>{product.title}</h1>
             <p>{product.description}</p>
             {product.affiliateLink && (

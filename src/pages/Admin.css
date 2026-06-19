@@ -55,6 +55,7 @@
 }
 
 .product-form label,
+.category-checks,
 .image-fields {
   display: grid;
   gap: 7px;
@@ -64,6 +65,52 @@
 
 .field-label {
   font-weight: 700;
+}
+
+.category-checks {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.category-checks legend {
+  margin: 0 0 7px;
+  padding: 0;
+  font-weight: 700;
+}
+
+.category-checks {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.category-checks legend {
+  grid-column: 1 / -1;
+}
+
+.category-checks label {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: var(--input-bg);
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.category-checks label:has(input:checked) {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: var(--accent-glow);
+}
+
+.category-checks input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-color);
 }
 
 .product-form input,

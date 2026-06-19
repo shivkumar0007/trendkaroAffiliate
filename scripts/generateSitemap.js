@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import admin from 'firebase-admin'
 import categories from '../src/data/categories.js'
+import { getProductCategories } from '../src/utils/productHelpers.js'
 
 const SITE_URL = 'https://silentadx.in'
 const __filename = fileURLToPath(import.meta.url)
@@ -97,9 +98,7 @@ async function generateSitemap() {
   const categoryIds = new Set(categories.map((category) => category.id))
 
   for (const product of products) {
-    if (product.category) {
-      categoryIds.add(product.category)
-    }
+    getProductCategories(product).forEach((categoryId) => categoryIds.add(categoryId))
   }
 
   const entries = [

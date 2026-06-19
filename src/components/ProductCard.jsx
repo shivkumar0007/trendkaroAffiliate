@@ -1,6 +1,13 @@
 import { Helmet } from 'react-helmet-async'
 import ImageCarousel from './ImageCarousel.jsx'
+import categories from '../data/categories.js'
+import { getProductCategories } from '../utils/productHelpers.js'
 import './ProductCard.css'
+
+const categoryLabelById = categories.reduce((labels, category) => {
+  labels[category.id] = category.label
+  return labels
+}, {})
 
 function getProductSchema(product) {
   return {
@@ -19,6 +26,8 @@ function getProductSchema(product) {
 }
 
 function ProductCard({ product }) {
+  const productCategories = getProductCategories(product)
+
   const openAffiliateLink = () => {
     if (product.affiliateLink) {
       window.open(product.affiliateLink, '_blank', 'noopener,noreferrer')
@@ -55,6 +64,15 @@ function ProductCard({ product }) {
         onKeyDown={handleKeyDown}
         aria-label={`Open ${product.title}`}
       >
+        {productCategories.length > 0 && (
+          <div className="product-card-categories" aria-label="Product categories">
+            {productCategories.map((categoryId) => (
+              <span className="product-card-category" key={categoryId}>
+                {categoryLabelById[categoryId] || categoryId}
+              </span>
+            ))}
+          </div>
+        )}
         <h3 title={product.title}>{product.title}</h3>
         <p title={product.description}>{product.description}</p>
       </div>
